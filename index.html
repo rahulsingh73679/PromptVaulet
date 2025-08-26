@@ -2,179 +2,180 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prompt Vault</title>
+  <title>Iron Man Prompt Vault</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: black;
+      color: #ff1c1c;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    header {
       padding: 20px;
-      background: #f4f4f4;
+      font-size: 2rem;
+      color: gold;
+      text-shadow: 0 0 15px red;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
+    .file-upload {
+      margin: 20px;
     }
 
-    .controls {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    #promptInput {
-      width: 60%;
+    input[type="file"] {
+      background: #111;
+      color: gold;
       padding: 10px;
-      margin: 10px;
+      border: 2px solid red;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover {
+      box-shadow: 0 0 15px red;
+    }
+
+    /* Notepad Page */
+    #notepad {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      background: black;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      width: 90%;
+      height: 80vh;
+      background: #0a0a0a;
+      color: #ff4040;
+      border: 2px solid gold;
+      border-radius: 12px;
+      font-size: 1rem;
+      padding: 15px;
+      resize: none;
+      outline: none;
+      box-shadow: 0 0 20px red inset;
     }
 
     button {
-      padding: 8px 14px;
-      margin: 5px;
-      border: none;
-      border-radius: 5px;
+      margin: 15px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-family: 'Orbitron', sans-serif;
+      background: black;
+      border: 2px solid red;
+      border-radius: 8px;
+      color: gold;
       cursor: pointer;
-      background: #007bff;
-      color: #fff;
+      transition: 0.3s;
     }
 
     button:hover {
-      background: #0056b3;
+      background: red;
+      color: black;
+      box-shadow: 0 0 20px gold;
     }
 
-    .board {
+    /* Music Player */
+    #musicControl {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      background: #111;
+      border: 2px solid gold;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      color: red;
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .prompt {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-size: 1.5rem;
+      box-shadow: 0 0 15px red;
     }
 
-    .prompt-text {
-      flex: 1;
-      margin-right: 15px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .prompt button {
-      margin-left: 5px;
-      background: #6c757d;
-    }
-
-    .prompt button.delete {
-      background: #dc3545;
-    }
-
-    .prompt button.edit {
-      background: #ffc107;
-      color: #000;
+    #musicControl:hover {
+      background: gold;
+      color: black;
     }
   </style>
 </head>
 <body>
+  <header>🔥 Iron Man Prompt Vault 🔥</header>
 
-  <h1>📜 Prompt Vault</h1>
-  <div class="controls">
-    <input type="text" id="promptInput" placeholder="Enter new prompt">
-    <button onclick="addPrompt()">Add</button>
-    <button onclick="exportTxt()">Export .txt</button>
-    <input type="file" id="fileInput" accept=".txt" onchange="importTxt(event)">
+  <div class="file-upload">
+    <input type="file" id="fileInput" accept=".txt">
   </div>
 
-  <div class="board" id="promptBoard"></div>
+  <div id="notepad">
+    <textarea id="editor"></textarea><br>
+    <button id="saveBtn">💾 Save as TXT</button>
+    <button id="backBtn">⬅ Back</button>
+  </div>
+
+  <audio id="bgMusic" src="a.mp3" loop></audio>
+  <div id="musicControl">▶</div>
 
   <script>
-    let prompts = [];
+    const fileInput = document.getElementById('fileInput');
+    const notepad = document.getElementById('notepad');
+    const editor = document.getElementById('editor');
+    const saveBtn = document.getElementById('saveBtn');
+    const backBtn = document.getElementById('backBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    const musicControl = document.getElementById('musicControl');
 
-    function renderPrompts() {
-      const board = document.getElementById("promptBoard");
-      board.innerHTML = "";
-      prompts.forEach((prompt, index) => {
-        const div = document.createElement("div");
-        div.className = "prompt";
-        
-        const textDiv = document.createElement("div");
-        textDiv.className = "prompt-text";
-        textDiv.textContent = prompt;
-        
-        const buttonsDiv = document.createElement("div");
+    let musicPlaying = false;
 
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.className = "edit";
-        editBtn.onclick = () => editPrompt(index);
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.className = "delete";
-        deleteBtn.onclick = () => deletePrompt(index);
-
-        buttonsDiv.appendChild(editBtn);
-        buttonsDiv.appendChild(deleteBtn);
-
-        div.appendChild(textDiv);
-        div.appendChild(buttonsDiv);
-
-        board.appendChild(div);
-      });
-    }
-
-    function addPrompt() {
-      const input = document.getElementById("promptInput");
-      if (input.value.trim() !== "") {
-        prompts.push(input.value.trim());
-        input.value = "";
-        renderPrompts();
-      }
-    }
-
-    function deletePrompt(index) {
-      prompts.splice(index, 1);
-      renderPrompts();
-    }
-
-    function editPrompt(index) {
-      const newText = prompt("Edit Prompt:", prompts[index]);
-      if (newText !== null && newText.trim() !== "") {
-        prompts[index] = newText.trim();
-        renderPrompts();
-      }
-    }
-
-    function exportTxt() {
-      const blob = new Blob([prompts.join("\n")], { type: "text/plain" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "prompts.txt";
-      a.click();
-    }
-
-    function importTxt(event) {
+    // File Upload → Open Notepad
+    fileInput.addEventListener('change', function(event) {
       const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        prompts = text.split("\n").filter(line => line.trim() !== "");
-        renderPrompts();
-      };
-      reader.readAsText(file);
-    }
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          editor.value = e.target.result;
+          document.querySelector('.file-upload').style.display = "none";
+          notepad.style.display = "block";
+        };
+        reader.readAsText(file);
+      }
+    });
 
-    // Initial render
-    renderPrompts();
+    // Save as TXT
+    saveBtn.addEventListener('click', function() {
+      const blob = new Blob([editor.value], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'prompts.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Back to File Upload
+    backBtn.addEventListener('click', function() {
+      notepad.style.display = "none";
+      document.querySelector('.file-upload').style.display = "block";
+    });
+
+    // Music Control
+    musicControl.addEventListener('click', function() {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicControl.textContent = "▶";
+      } else {
+        bgMusic.play();
+        musicControl.textContent = "⏸";
+      }
+      musicPlaying = !musicPlaying;
+    });
   </script>
-
 </body>
 </html>

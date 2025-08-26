@@ -100,6 +100,53 @@
       font-size: 1.5rem;
       box-shadow: 0 0 15px red;
     }
+    /* Make the container scrollable while keeping buttons reachable */
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Text area takes available space */
+#editor {
+    flex: 1;
+    resize: none;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.85);
+    color: #00f0ff;
+    font-family: "Courier New", monospace;
+    padding: 15px;
+    border: none;
+    outline: none;
+    overflow-y: auto;
+}
+
+/* Buttons stay fixed at bottom */
+.bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(20, 20, 20, 0.95);
+    border-top: 2px solid #ff0040;
+    position: sticky;
+    bottom: 0;
+    z-index: 1000;
+}
+.bottom-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #ff0040, #900020);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.bottom-buttons button:hover {
+    background: linear-gradient(145deg, #ff4060, #b00030);
+    transform: scale(1.05);
+}
 
     #musicControl:hover {
       background: gold;

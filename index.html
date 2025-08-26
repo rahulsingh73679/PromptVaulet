@@ -6,6 +6,30 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
+.color-picker {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 2px solid #ff0000;
+}
+
+.color-btn {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.color-btn:hover {
+  transform: scale(1.2);
+}
+
+
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
@@ -155,7 +179,24 @@
   </style>
 </head>
 <body>
+
   <header>🔥 Iron Man Prompt Vault 🔥</header>
+<!-- Add this inside <body> of notepad.html, just above textarea -->
+<div class="color-picker">
+  <button class="color-btn" style="background:#FF0000;" onclick="changeColor('#FF0000')"></button>
+  <button class="color-btn" style="background:#FFD700;" onclick="changeColor('#FFD700')"></button>
+  <button class="color-btn" style="background:#00BFFF;" onclick="changeColor('#00BFFF')"></button>
+  <button class="color-btn" style="background:#00FF7F;" onclick="changeColor('#00FF7F')"></button>
+  <button class="color-btn" style="background:#FFFFFF; border:1px solid #444;" onclick="changeColor('#FFFFFF')"></button>
+</div>
+
+<textarea id="editor"></textarea>
+
+<script>
+  function changeColor(color) {
+    document.getElementById("editor").style.color = color;
+  }
+</script>
 
   <div class="file-upload">
     <input type="file" id="fileInput" accept=".txt">
